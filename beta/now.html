@@ -140,7 +140,6 @@
       color: var(--md-primary);
     }
 
-    /* Кастомная жирная стрелка в селекте */
     .md-select-wrapper {
       position: relative;
       display: inline-block;
@@ -228,6 +227,7 @@
       font-size: 14px;
     }
 
+    /* Цвета статусов заявок */
     .status-chip {
       padding: 4px 8px;
       border-radius: 12px;
@@ -238,6 +238,7 @@
 
     .status-pending { background: #FFF9C4; color: #F57F17; }
     .status-approved { background: #C8E6C9; color: #2E7D32; }
+    .status-rejected { background: #FFCDD2; color: #C62828; } /* Красная плашка */
 
     .hidden { display: none !important; }
   </style>
@@ -276,24 +277,29 @@
     const CLOUDINARY_PRESET = "sovbb.root";
 
     let selectedFiles = [];
-    let userIP = "unknown";
     let isDomainAvailable = false;
     let finalPunycodeDomain = "";
     let checkTimeout = null;
 
-    // Получение IP
-    fetch('https://api.ipify.org?format=json')
-      .then(res => res.json())
-      .then(data => {
-        userIP = data.ip;
-        loadUserApplications();
-      })
-      .catch(() => loadUserApplications());
+    // Генерация/получение идентификатора браузера в localStorage
+    function getDeviceId() {
+      let id = localStorage.getItem('app_device_id');
+      if (!id) {
+        id = 'dev_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
+        localStorage.setItem('app_device_id', id);
+      }
+      return id;
+    }
 
-    // Валидатор символов
+    const deviceId = getDeviceId();
+
+    // Загрузка заявок при открытии
+    document.addEventListener("DOMContentLoaded", () => {
+      loadUserApplications();
+    });
+
     const validDomainRegex = /^[a-zA-Z0-9а-яА-ЯёЁ\-]+$/;
 
-    // Полный список зарезервированных системных префиксов
     const reservedPrefixes = new Set([
       "www", "api", "mail", "admin", "administrator", "dev", "app", "blog", 
       "ns", "ns1", "ns2", "ns3", "ftp", "smtp", "pop", "pop3", "imap", "dns", 
@@ -303,7 +309,6 @@
       "autodiscover", "m", "mobile", "proxy", "vpn", "gateway", "cpanel"
     ]);
 
-    // Таймер задержки (debounce) для решения проблемы быстрого ввода
     window.onDomainInputChange = function() {
       const nextBtn = document.getElementById('btn-step1-next');
       isDomainAvailable = false;
@@ -336,7 +341,6 @@
         return;
       }
 
-      // Проверка на технические/системные имена
       if (reservedPrefixes.has(name)) {
         helper.className = "helper-text error";
         helper.innerText = `Имя "${name}" является системным и зарезервировано.`;
@@ -345,7 +349,6 @@
         return;
       }
 
-      // Проверка на недопустимые символы
       if (!validDomainRegex.test(name)) {
         helper.className = "helper-text error";
         helper.innerText = "Недопустимые символы! Разрешены только буквы, цифры и дефис.";
@@ -356,7 +359,6 @@
 
       const fullDomain = `${name}.${zone}`;
       
-      // Генерация Punycode при наличии кириллицы
       const containsCyrillic = /[а-яА-ЯёЁ]/.test(name);
       if (containsCyrillic) {
         const punyPrefix = toPunycode(name);
@@ -435,7 +437,6 @@
 
       const name = document.getElementById('domain-prefix').value.trim().toLowerCase();
       
-      // Повторный контроль безопасности непосредственно перед отправкой
       if (reservedPrefixes.has(name)) {
         alert(`Ошибка: Имя "${name}" зарезервировано системами.`);
         location.reload();
@@ -463,7 +464,7 @@
           domain: fullDomain,
           punycode: finalPunycodeDomain,
           status: "pending",
-          ip: userIP,
+          deviceId: deviceId, // Сохраняем привязку по идентификатору браузера
           createdAt: new Date().toISOString(),
           files: uploadedFiles
         });
@@ -481,31 +482,49 @@
 
     async function loadUserApplications() {
       const appContainer = document.getElementById('user-apps');
-      const q = query(collection(db, "domains"), where("ip", "==", userIP));
-      const querySnapshot = await getDocs(q);
+      
+      try {
+        // Фильтрация по deviceId браузера
+        const q = query(collection(db, "domains"), where("deviceId", "==", deviceId));
+        const querySnapshot = await getDocs(q);
 
-      if (querySnapshot.empty) {
-        appContainer.innerHTML = "<p style='color: var(--text-secondary); font-size:14px;'>У вас пока нет активных заявок.</p>";
-        return;
+        if (querySnapshot.empty) {
+          appContainer.innerHTML = "<p style='color: var(--text-secondary); font-size:14px;'>У вас пока нет активных заявок.</p>";
+          return;
+        }
+
+        let html = "";
+        querySnapshot.forEach((docSnap) => {
+          const data = docSnap.data();
+          
+          let statusText = "На рассмотрении";
+          let statusClass = "status-pending";
+
+          if (data.status === 'approved') {
+            statusText = "Одобрен";
+            statusClass = "status-approved";
+          } else if (data.status === 'rejected') {
+            statusText = "Отклонен";
+            statusClass = "status-rejected";
+          }
+
+          html += `
+            <div class="file-item" style="padding:12px; margin-bottom:8px;">
+              <div>
+                <strong>http://${data.domain}</strong> ${data.punycode && data.punycode !== data.domain ? `<small>(${data.punycode})</small>` : ''}<br>
+                <small>Файлов: ${data.files ? data.files.length : 0}</small>
+              </div>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span class="status-chip ${statusClass}">${statusText}</span>
+                <span class="material-icons" style="cursor:pointer; color:var(--text-secondary)" onclick="editApplication('${data.domain}')">edit</span>
+              </div>
+            </div>
+          `;
+        });
+        appContainer.innerHTML = html;
+      } catch (err) {
+        appContainer.innerHTML = "<p style='color: var(--text-secondary); font-size:14px;'>Ошибка при загрузке ваших заявок.</p>";
       }
-
-      let html = "";
-      querySnapshot.forEach((docSnap) => {
-        const data = docSnap.data();
-        html += `
-          <div class="file-item" style="padding:12px; margin-bottom:8px;">
-            <div>
-              <strong>http://${data.domain}</strong> ${data.punycode && data.punycode !== data.domain ? `<small>(${data.punycode})</small>` : ''}<br>
-              <small>Файлов: ${data.files ? data.files.length : 0}</small>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <span class="status-chip status-${data.status}">${data.status === 'pending' ? 'На рассмотрении' : 'Одобрен'}</span>
-              <span class="material-icons" style="cursor:pointer; color:var(--text-secondary)" onclick="editApplication('${data.domain}')">edit</span>
-            </div>
-          </div>
-        `;
-      });
-      appContainer.innerHTML = html;
     }
 
     window.editApplication = function(domainName) {
