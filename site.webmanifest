@@ -1,0 +1,17 @@
+{
+  "name": "Sovbb/root — Регистратор доменов",
+  "short_name": "Sovbb/root",
+  "description": "Народный регистратор доменов 3-го и 4-го уровней",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#121212",
+  "theme_color": "#D32F2F",
+  "icons": [
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
+
