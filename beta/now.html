@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="ru" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Бета-тест регистрации домена — sovbb/root</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <style>
+    :root {
+      --md-primary: #D32F2F;
+      --md-primary-dark: #B71C1C;
+      --md-accent: #FFD600;
+      --md-bg: #F5F5F5;
+      --md-surface: #FFFFFF;
+      --text-primary: rgba(0, 0, 0, 0.87);
+      --text-secondary: rgba(0, 0, 0, 0.54);
+      --shadow-2dp: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2);
+      --shadow-4dp: 0 4px 5px 0 rgba(0,0,0,0.14), 0 1px 10px 0 rgba(0,0,0,0.12), 0 2px 4px -1px rgba(0,0,0,0.3);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: var(--md-bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .app-bar {
+      height: 64px;
+      background-color: var(--md-primary);
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      box-shadow: var(--shadow-4dp);
+    }
+
+    .app-bar-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 20px;
+      font-weight: 500;
+      text-decoration: none;
+      color: #FFFFFF;
+    }
+
+    .brand-logo-text .sov { color: #FFFFFF; }
+    .brand-logo-text .bb { color: var(--md-accent); font-weight: 700; }
+    .brand-logo-text .root { color: rgba(255, 255, 255, 0.7); font-weight: 300; }
+
+    .container {
+      max-width: 800px;
+      width: 100%;
+      margin: 24px auto;
+      padding: 0 16px;
+      flex: 1;
+    }
+
+    .card {
+      background: var(--md-surface);
+      border-radius: 2px;
+      padding: 24px;
+      box-shadow: var(--shadow-2dp);
+      margin-bottom: 24px;
+    }
+
+    .card h1 {
+      font-size: 24px;
+      font-weight: 400;
+      color: var(--md-primary-dark);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .info-box {
+      background: #FFFDE7;
+      border-left: 4px solid var(--md-accent);
+      padding: 16px;
+      margin-bottom: 24px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .info-box h3 { font-size: 15px; margin-bottom: 8px; color: #5D4037; }
+
+    .domain-builder {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+    }
+
+    .md-input-wrapper {
+      position: relative;
+      flex: 1;
+    }
+
+    .md-input {
+      font-size: 16px;
+      padding: 10px 0;
+      display: block;
+      width: 100%;
+      border: none;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.42);
+      background: transparent;
+      outline: none;
+      font-family: inherit;
+    }
+
+    .md-input:focus {
+      border-bottom: 2px solid var(--md-primary);
+    }
+
+    .md-label {
+      color: var(--text-secondary);
+      font-size: 16px;
+      position: absolute;
+      pointer-events: none;
+      left: 0;
+      top: 10px;
+      transition: 0.2s ease all;
+    }
+
+    .md-input:focus ~ .md-label,
+    .md-input:not(:placeholder-shown) ~ .md-label {
+      top: -14px;
+      font-size: 12px;
+      color: var(--md-primary);
+    }
+
+    /* Кастомная жирная стрелка в селекте */
+    .md-select-wrapper {
+      position: relative;
+      display: inline-block;
+    }
+
+    .md-select {
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      padding: 10px 28px 10px 0;
+      font-size: 16px;
+      border: none;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.42);
+      background: transparent;
+      outline: none;
+      color: var(--md-primary-dark);
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .md-select-wrapper::after {
+      content: 'expand_more';
+      font-family: 'Material Icons';
+      font-size: 22px;
+      font-weight: bold;
+      color: var(--md-primary-dark);
+      position: absolute;
+      right: 2px;
+      bottom: 8px;
+      pointer-events: none;
+    }
+
+    .helper-text {
+      font-size: 12px;
+      margin-top: 6px;
+      min-height: 18px;
+    }
+
+    .helper-text.error { color: #D32F2F; }
+    .helper-text.success { color: #388E3C; }
+    .helper-text.punycode { color: #1976D2; font-family: monospace; font-size: 13px; }
+
+    .btn-md {
+      background: var(--md-primary);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: 500;
+      text-transform: uppercase;
+      border-radius: 2px;
+      cursor: pointer;
+      box-shadow: var(--shadow-2dp);
+      transition: background 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-md:hover { background: var(--md-primary-dark); }
+    .btn-md:disabled { background: #BDBDBD; cursor: not-allowed; }
+
+    .file-dropzone {
+      border: 2px dashed rgba(0, 0, 0, 0.24);
+      padding: 24px;
+      text-align: center;
+      border-radius: 4px;
+      background: #FAFAFA;
+      cursor: pointer;
+      margin: 16px 0;
+    }
+
+    .file-dropzone:hover { background: #F0F0F0; border-color: var(--md-primary); }
+
+    .file-list { list-style: none; margin: 12px 0; }
+
+    .file-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      background: #F0F0F0;
+      margin-bottom: 6px;
+      border-radius: 2px;
+      font-size: 14px;
+    }
+
+    .status-chip {
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+      text-transform: uppercase;
+    }
+
+    .status-pending { background: #FFF9C4; color: #F57F17; }
+    .status-approved { background: #C8E6C9; color: #2E7D32; }
+
+    .hidden { display: none !important; }
+  </style>
+
+  <!-- Punycode Converter -->
+  <script>
+    function toPunycode(str) {
+      if (!/[^\x00-\x7F]/.test(str)) return str;
+      try {
+        return "xn--" + encodeURIComponent(str).replace(/%/g, '').toLowerCase();
+      } catch(e) {
+        return str;
+      }
+    }
+  </script>
+
+  <!-- Firebase Integration -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, doc, setDoc, getDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAOGKMVIPrqu1PFiwH_I2Nglon0t2mVzXY",
+      authDomain: "sovbb-root.firebaseapp.com",
+      projectId: "sovbb-root",
+      storageBucket: "sovbb-root.firebasestorage.app",
+      messagingSenderId: "64193289889",
+      appId: "1:64193289889:web:2bc23ebbaa2ef2b69edae0",
+      measurementId: "G-14K2N3QGWY"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const CLOUDINARY_CLOUD_NAME = "fzg9gjvh";
+    const CLOUDINARY_PRESET = "sovbb.root";
+
+    let selectedFiles = [];
+    let userIP = "unknown";
+    let isDomainAvailable = false;
+    let finalPunycodeDomain = "";
+    let checkTimeout = null;
+
+    // Получение IP
+    fetch('https://api.ipify.org?format=json')
+      .then(res => res.json())
+      .then(data => {
+        userIP = data.ip;
+        loadUserApplications();
+      })
+      .catch(() => loadUserApplications());
+
+    // Валидатор символов
+    const validDomainRegex = /^[a-zA-Z0-9а-яА-ЯёЁ\-]+$/;
+
+    // Полный список зарезервированных системных префиксов
+    const reservedPrefixes = new Set([
+      "www", "api", "mail", "admin", "administrator", "dev", "app", "blog", 
+      "ns", "ns1", "ns2", "ns3", "ftp", "smtp", "pop", "pop3", "imap", "dns", 
+      "cdn", "server", "host", "root", "git", "status", "test", "stage", 
+      "staging", "portal", "dashboard", "panel", "login", "auth", "sso", "ssl", 
+      "secure", "support", "help", "billing", "shop", "store", "pay", "mx", 
+      "autodiscover", "m", "mobile", "proxy", "vpn", "gateway", "cpanel"
+    ]);
+
+    // Таймер задержки (debounce) для решения проблемы быстрого ввода
+    window.onDomainInputChange = function() {
+      const nextBtn = document.getElementById('btn-step1-next');
+      isDomainAvailable = false;
+      nextBtn.disabled = true;
+
+      if (checkTimeout) {
+        clearTimeout(checkTimeout);
+      }
+
+      checkTimeout = setTimeout(() => {
+        checkDomainAvailability();
+      }, 150);
+    };
+
+    window.checkDomainAvailability = async function() {
+      const inputEl = document.getElementById('domain-prefix');
+      const name = inputEl.value.trim().toLowerCase();
+      const zone = document.getElementById('domain-zone').value;
+      const helper = document.getElementById('domain-helper');
+      const punyHelper = document.getElementById('punycode-helper');
+      const nextBtn = document.getElementById('btn-step1-next');
+
+      punyHelper.innerText = "";
+      
+      if (!name) {
+        helper.className = "helper-text error";
+        helper.innerText = "Введите имя субдомена.";
+        isDomainAvailable = false;
+        nextBtn.disabled = true;
+        return;
+      }
+
+      // Проверка на технические/системные имена
+      if (reservedPrefixes.has(name)) {
+        helper.className = "helper-text error";
+        helper.innerText = `Имя "${name}" является системным и зарезервировано.`;
+        isDomainAvailable = false;
+        nextBtn.disabled = true;
+        return;
+      }
+
+      // Проверка на недопустимые символы
+      if (!validDomainRegex.test(name)) {
+        helper.className = "helper-text error";
+        helper.innerText = "Недопустимые символы! Разрешены только буквы, цифры и дефис.";
+        isDomainAvailable = false;
+        nextBtn.disabled = true;
+        return;
+      }
+
+      const fullDomain = `${name}.${zone}`;
+      
+      // Генерация Punycode при наличии кириллицы
+      const containsCyrillic = /[а-яА-ЯёЁ]/.test(name);
+      if (containsCyrillic) {
+        const punyPrefix = toPunycode(name);
+        finalPunycodeDomain = `${punyPrefix}.${zone}`;
+        punyHelper.innerText = `Punycode: ${finalPunycodeDomain}`;
+      } else {
+        finalPunycodeDomain = fullDomain;
+      }
+
+      helper.className = "helper-text";
+      helper.innerText = "Проверка наличия...";
+
+      try {
+        const docRef = doc(db, "domains", fullDomain);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          helper.className = "helper-text error";
+          helper.innerText = `Домен ${fullDomain} уже занят!`;
+          isDomainAvailable = false;
+          nextBtn.disabled = true;
+        } else {
+          helper.className = "helper-text success";
+          helper.innerText = `Домен ${fullDomain} свободен!`;
+          isDomainAvailable = true;
+          nextBtn.disabled = false;
+        }
+      } catch (err) {
+        helper.className = "helper-text error";
+        helper.innerText = "Ошибка сети при проверке.";
+      }
+    };
+
+    window.goToStep2 = function() {
+      if (!isDomainAvailable) return;
+      document.getElementById('step-1').classList.add('hidden');
+      document.getElementById('step-2').classList.remove('hidden');
+    };
+
+    document.getElementById('file-input').addEventListener('change', (e) => {
+      const files = Array.from(e.target.files);
+      selectedFiles = selectedFiles.concat(files);
+      renderFileList();
+    });
+
+    function renderFileList() {
+      const list = document.getElementById('file-list');
+      list.innerHTML = selectedFiles.map((file, index) => `
+        <li class="file-item">
+          <span>${file.name} (${(file.size / 1024).toFixed(1)} KB)</span>
+          <span class="material-icons" style="cursor:pointer; color:#D32F2F" onclick="removeFile(${index})">delete</span>
+        </li>
+      `).join('');
+    }
+
+    window.removeFile = function(index) {
+      selectedFiles.splice(index, 1);
+      renderFileList();
+    };
+
+    async function uploadToCloudinary(file) {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', CLOUDINARY_PRESET);
+
+      const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`, {
+        method: 'POST',
+        body: formData
+      });
+      return await res.json();
+    }
+
+    window.submitApplication = async function() {
+      const submitBtn = document.getElementById('btn-submit');
+      const loader = document.getElementById('submit-loader');
+
+      const name = document.getElementById('domain-prefix').value.trim().toLowerCase();
+      
+      // Повторный контроль безопасности непосредственно перед отправкой
+      if (reservedPrefixes.has(name)) {
+        alert(`Ошибка: Имя "${name}" зарезервировано системами.`);
+        location.reload();
+        return;
+      }
+
+      submitBtn.disabled = true;
+      loader.classList.remove('hidden');
+
+      const zone = document.getElementById('domain-zone').value;
+      const fullDomain = `${name}.${zone}`;
+
+      try {
+        const uploadedFiles = [];
+        for (let file of selectedFiles) {
+          const cloudRes = await uploadToCloudinary(file);
+          uploadedFiles.push({
+            name: file.name,
+            url: cloudRes.secure_url,
+            public_id: cloudRes.public_id
+          });
+        }
+
+        await setDoc(doc(db, "domains", fullDomain), {
+          domain: fullDomain,
+          punycode: finalPunycodeDomain,
+          status: "pending",
+          ip: userIP,
+          createdAt: new Date().toISOString(),
+          files: uploadedFiles
+        });
+
+        document.getElementById('step-2').classList.add('hidden');
+        document.getElementById('step-success').classList.remove('hidden');
+        loadUserApplications();
+      } catch (err) {
+        alert("Ошибка при отправке заявки: " + err.message);
+        submitBtn.disabled = false;
+      } finally {
+        loader.classList.add('hidden');
+      }
+    };
+
+    async function loadUserApplications() {
+      const appContainer = document.getElementById('user-apps');
+      const q = query(collection(db, "domains"), where("ip", "==", userIP));
+      const querySnapshot = await getDocs(q);
+
+      if (querySnapshot.empty) {
+        appContainer.innerHTML = "<p style='color: var(--text-secondary); font-size:14px;'>У вас пока нет активных заявок.</p>";
+        return;
+      }
+
+      let html = "";
+      querySnapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        html += `
+          <div class="file-item" style="padding:12px; margin-bottom:8px;">
+            <div>
+              <strong>http://${data.domain}</strong> ${data.punycode && data.punycode !== data.domain ? `<small>(${data.punycode})</small>` : ''}<br>
+              <small>Файлов: ${data.files ? data.files.length : 0}</small>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span class="status-chip status-${data.status}">${data.status === 'pending' ? 'На рассмотрении' : 'Одобрен'}</span>
+              <span class="material-icons" style="cursor:pointer; color:var(--text-secondary)" onclick="editApplication('${data.domain}')">edit</span>
+            </div>
+          </div>
+        `;
+      });
+      appContainer.innerHTML = html;
+    }
+
+    window.editApplication = function(domainName) {
+      alert(`Запрос редактирования для ${domainName}. Напишите администратору @CMEPTb_AHTUKOMAM для оперативной замены файлов.`);
+    };
+  </script>
+</head>
+<body>
+
+  <header class="app-bar">
+    <a href="https://sov.bbroot.com/" class="app-bar-brand">
+      <span class="material-icons" style="color: var(--md-accent);">star</span>
+      <span class="brand-logo-text">
+        <span class="sov">sov</span><span class="bb">bb</span><span class="root">/root</span>
+      </span>
+    </a>
+  </header>
+
+  <main class="container">
+    
+    <div class="card">
+      <h1><span class="material-icons" style="color: var(--md-primary);">star</span> Бета-тест регистрации доменов</h1>
+      <div class="info-box">
+        <h3>Условия и порядок предоставления:</h3>
+        <p>• Бесплатные доменные имена 3-го и 4-го уровней предоставляются участникам бета-теста, марксистам/ленинистам и всем, кто с уважением относится к советскому периоду.</p>
+        <p>• Регистрация проходит по заявкам. Обработка через форму занимает не более 24 часов.</p>
+        <p>• На текущем этапе все субдомены работают по протоколу <strong>http://</strong> (поддержка https:// появится в ближайших обновлениях).</p>
+      </div>
+
+      <!-- Шаг 1: Выбор и проверка домена -->
+      <div id="step-1">
+        <h2 style="font-size: 18px; font-weight: 500; margin-bottom: 16px;">Шаг 1: Выберите имя домена</h2>
+        
+        <div class="domain-builder">
+          <div class="md-input-wrapper">
+            <input type="text" id="domain-prefix" class="md-input" placeholder=" " oninput="onDomainInputChange()">
+            <label class="md-label">Имя субдомена</label>
+          </div>
+
+          <div class="md-select-wrapper">
+            <select id="domain-zone" class="md-select" onchange="checkDomainAvailability()">
+              <option value="ussr.l.cd">.ussr.l.cd</option>
+              <option value="cccp.l.cd">.cccp.l.cd</option>
+              <option value="stalin.l.cd">.stalin.l.cd</option>
+              <option value="revolution.l.cd">.revolution.l.cd</option>
+              <option value="comparty.l.cd">.comparty.l.cd</option>
+              <option value="mels.l.cd">.mels.l.cd</option>
+              <option value="marx.l.cd">.marx.l.cd</option>
+              <option value="engels.l.cd">.engels.l.cd</option>
+              <option value="internationa.l.cd">.internationa.l.cd</option>
+              <option value="communism.l.cd">.communism.l.cd</option>
+              <option value="minsvyazi.l.cd">.minsvyazi.l.cd</option>
+              <option value="su-mai.l.cd">.su-mai.l.cd</option>
+              <option value="1917.l.cd">.1917.l.cd</option>
+              <option value="1922.l.cd">.1922.l.cd</option>
+              <option value="1945.l.cd">.1945.l.cd</option>
+              <option value="su-com.l.cd" selected>.su-com.l.cd</option>
+              <option value="gost.l.cd">.gost.l.cd</option>
+              <option value="rev.l.cd">.rev.l.cd</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="domain-helper" class="helper-text"></div>
+        <div id="punycode-helper" class="helper-text punycode"></div>
+
+        <button id="btn-step1-next" class="btn-md" style="margin-top: 16px;" disabled onclick="goToStep2()">
+          Продолжить <span class="material-icons">arrow_forward</span>
+        </button>
+      </div>
+
+      <!-- Шаг 2: Загрузка файлов -->
+      <div id="step-2" class="hidden">
+        <h2 style="font-size: 18px; font-weight: 500; margin-bottom: 12px;">Шаг 2: Загрузка файлов сайта</h2>
+        <p style="font-size: 14px; color: var(--text-secondary);">
+          Прикрепите файлы вашего сайта (допустимые форматы: <code>html, css, js, txt, pdf, png, jpeg, ico</code>).
+        </p>
+
+        <div class="file-dropzone" onclick="document.getElementById('file-input').click()">
+          <span class="material-icons" style="font-size: 36px; color: var(--md-primary);">cloud_upload</span>
+          <p style="font-size: 14px; margin-top: 8px;">Нажмите, чтобы выбрать файлы сайта (Index.html и др.)</p>
+          <input type="file" id="file-input" multiple style="display:none;">
+        </div>
+
+        <ul id="file-list" class="file-list"></ul>
+
+        <div style="display:flex; gap:12px; align-items:center; margin-top: 16px;">
+          <button id="btn-submit" class="btn-md" onclick="submitApplication()">
+            Отправить заявку
+          </button>
+          <span id="submit-loader" class="hidden" style="font-size:13px; color: var(--text-secondary);">Загрузка файлов на Cloudinary...</span>
+        </div>
+      </div>
+
+      <!-- Шаг 3: Успешная отправка -->
+      <div id="step-success" class="hidden" style="text-align: center; padding: 20px 0;">
+        <span class="material-icons" style="font-size: 56px; color: #388E3C;">check_circle</span>
+        <h2 style="font-size: 20px; font-weight: 500; margin-top: 8px;">Заявка успешно отправлена!</h2>
+        <p style="font-size: 14px; color: var(--text-secondary); margin-top: 8px; line-height: 1.5;">
+          Ваша заявка на регистрацию домена будет скоро одобрена.<br>Пожалуйста, вернитесь на сайт в течение <strong>24 часов</strong> для проверки статуса.
+        </p>
+      </div>
+    </div>
+
+    <!-- Мои заявки -->
+    <div class="card">
+      <h2 style="font-size: 18px; font-weight: 500; margin-bottom: 16px; display:flex; align-items:center; gap:8px;">
+        <span class="material-icons" style="color:var(--md-primary)">list_alt</span>
+        Ваши заявки на регистрацию
+      </h2>
+      <div id="user-apps">Загрузка ваших данных...</div>
+    </div>
+
+  </main>
+
+</body>
+</html>
