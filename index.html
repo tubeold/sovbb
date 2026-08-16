@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="ru" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- SEO Мета-теги -->
+  <title>sovbb — Народный регистратор доменов</title>
+  <meta name="description" content="Открытая сетевая инфраструктура 3-го и 4-го уровней. Выбирайте свободу и доступность цифровых ресурсов по протоколу HTTP в зонах ussr.l.cd, cccp.l.cd и других.">
+  <meta name="keywords" content="sovbb, bbroot, регистратор доменов, бесплатные домены, ussr.l.cd, cccp.l.cd, stalin.l.cd, 1917.l.cd, домены 3 уровня, домены 4 уровня">
+  <meta name="author" content="sovbb/root">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <link rel="canonical" href="https://sov.bbroot.com/">
+
+  <!-- Иконки и Фавикон (Favicon) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23FFD600'><path d='M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z'/></svg>">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://sov.bbroot.com/apple-touch-icon.png">
+  <meta name="theme-color" content="#D32F2F">
+  <meta name="msapplication-TileColor" content="#D32F2F">
+
+  <!-- Open Graph / Facebook / Telegram / VK / Discord -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://sov.bbroot.com/">
+  <meta property="og:site_name" content="Sovbb/root">
+  <meta property="og:title" content="sovbb — Народный регистратор доменов">
+  <meta property="og:description" content="Открытая сетевая инфраструктура доменов 3-го и 4-го уровней. Доступ к народным зонам по протоколу HTTP.">
+  <meta property="og:image" content="https://sov.bbroot.com/og-banner.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Логотип и доменные зоны sovbb/root">
+  <meta property="og:locale" content="ru_RU">
+
+  <!-- Twitter Cards -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://sov.bbroot.com/">
+  <meta name="twitter:title" content="sovbb — Народный регистратор доменов">
+  <meta name="twitter:description" content="Открытая сетевая инфраструктура доменов 3-го и 4-го уровней. Доступ к народным зонам по протоколу HTTP.">
+  <meta name="twitter:image" content="https://sov.bbroot.com/og-banner.png">
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/site.webmanifest">
+
+  <!-- Schema.org Микроразметка -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Sovbb/root",
+    "alternateName": "sovbb",
+    "url": "https://sov.bbroot.com/",
+    "description": "Народный регистратор доменов 3-го и 4-го уровней.",
+    "publisher": {
+      "@type": "Organization",
+      "name": "sovbb/root",
+      "url": "https://sov.bbroot.com/",
+      "logo": "https://sov.bbroot.com/apple-touch-icon.png"
+    }
+  }
+  </script>
+
+  <!-- Google Fonts: Roboto & Material Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <style>
+    :root {
+      --md-primary: #D32F2F;
+      --md-primary-dark: #B71C1C;
+      --md-accent: #FFD600;
+      --md-bg: #F5F5F5;
+      --md-surface: #FFFFFF;
+      --text-primary: rgba(0, 0, 0, 0.87);
+      --text-secondary: rgba(0, 0, 0, 0.54);
+      
+      --shadow-2dp: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2);
+      --shadow-4dp: 0 4px 5px 0 rgba(0,0,0,0.14), 0 1px 10px 0 rgba(0,0,0,0.12), 0 2px 4px -1px rgba(0,0,0,0.3);
+      --shadow-8dp: 0 8px 10px 1px rgba(0,0,0,0.14), 0 3px 14px 2px rgba(0,0,0,0.12), 0 5px 5px -3px rgba(0,0,0,0.2);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: var(--md-bg);
+      color: var(--text-primary);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .app-bar {
+      height: 64px;
+      background-color: var(--md-primary);
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      box-shadow: var(--shadow-4dp);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .app-bar-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 20px;
+      font-weight: 500;
+      text-decoration: none;
+      color: #FFFFFF;
+    }
+
+    .brand-logo-text .sov { color: #FFFFFF; }
+    .brand-logo-text .bb { color: var(--md-accent); font-weight: 700; }
+    .brand-logo-text .root { color: rgba(255, 255, 255, 0.7); font-weight: 300; }
+
+    .menu-container { position: relative; }
+
+    .icon-btn {
+      background: none;
+      border: none;
+      color: #FFFFFF;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.2s;
+    }
+
+    .icon-btn:hover { background-color: rgba(255, 255, 255, 0.12); }
+
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 48px;
+      background-color: var(--md-surface);
+      border-radius: 2px;
+      box-shadow: var(--shadow-8dp);
+      min-width: 220px;
+      padding: 8px 0;
+      z-index: 101;
+    }
+
+    .dropdown-menu.active { display: block; }
+
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 12px 16px;
+      color: var(--text-primary);
+      text-decoration: none;
+      font-size: 14px;
+      transition: background-color 0.2s;
+    }
+
+    .dropdown-item:hover { background-color: rgba(0, 0, 0, 0.04); }
+    .dropdown-item .material-icons { color: var(--text-secondary); font-size: 20px; }
+    
+    .tg-icon {
+      width: 20px;
+      height: 20px;
+      fill: var(--text-secondary);
+    }
+
+    .hero {
+      background-color: var(--md-primary-dark);
+      color: #FFFFFF;
+      padding: 48px 16px;
+      text-align: center;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    }
+
+    .hero h1 { font-size: 32px; font-weight: 400; margin-bottom: 12px; }
+    .hero p {
+      font-size: 16px;
+      color: rgba(255, 255, 255, 0.87);
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 32px 16px;
+      flex: 1;
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-title .material-icons { color: var(--md-primary); }
+
+    .domains-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .domain-card {
+      background-color: var(--md-surface);
+      border-radius: 2px;
+      box-shadow: var(--shadow-2dp);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+
+    .domain-card:hover {
+      box-shadow: var(--shadow-4dp);
+      transform: translateY(-2px);
+    }
+
+    .domain-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .domain-header .material-icons {
+      color: var(--md-primary);
+      font-size: 22px;
+    }
+
+    .domain-name {
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--md-primary-dark);
+      word-break: break-all;
+    }
+
+    .domain-protocol {
+      font-size: 13px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 16px;
+    }
+
+    .domain-protocol .material-icons { font-size: 16px; color: #388E3C; }
+
+    .card-actions { display: flex; justify-content: flex-end; }
+
+    .btn-flat {
+      background: none;
+      border: none;
+      color: var(--md-primary);
+      font-size: 14px;
+      font-weight: 500;
+      text-transform: uppercase;
+      padding: 8px 12px;
+      border-radius: 2px;
+      cursor: pointer;
+      text-decoration: none;
+      letter-spacing: 0.5px;
+      transition: background-color 0.2s;
+    }
+
+    .btn-flat:hover { background-color: rgba(211, 47, 47, 0.08); }
+
+    /* Полноценный Футер */
+    .footer {
+      background-color: #1a1a1a;
+      color: #FFFFFF;
+      padding: 48px 16px 24px 16px;
+      margin-top: 64px;
+      border-top: 3px solid var(--md-primary);
+    }
+
+    .footer-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 32px;
+      margin-bottom: 40px;
+    }
+
+    .footer-col h4 {
+      color: var(--md-accent);
+      font-size: 16px;
+      font-weight: 500;
+      margin-bottom: 16px;
+      letter-spacing: 0.5px;
+    }
+
+    .footer-col p {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .footer-links {
+      list-style: none;
+    }
+
+    .footer-links li {
+      margin-bottom: 10px;
+    }
+
+    .footer-links a {
+      color: rgba(255, 255, 255, 0.87);
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: var(--md-accent);
+    }
+
+    .footer-links .material-icons {
+      font-size: 16px;
+      color: rgba(255, 255, 255, 0.54);
+    }
+
+    .footer-bottom {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.54);
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #81C784;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background-color: #4CAF50;
+      border-radius: 50%;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="app-bar">
+    <a href="/" class="app-bar-brand" aria-label="На главную sovbb">
+      <span class="material-icons" style="color: var(--md-accent);">star</span>
+      <span class="brand-logo-text">
+        <span class="sov">sov</span><span class="bb">bb</span><span class="root">/root</span>
+      </span>
+    </a>
+
+    <div class="menu-container">
+      <button class="icon-btn" id="menu-btn" aria-label="Открыть меню">
+        <span class="material-icons">more_vert</span>
+      </button>
+      <div class="dropdown-menu" id="dropdown-menu">
+        <a href="https://sov.bbroot.com/" class="dropdown-item">
+          <span class="material-icons">public</span> Главная
+        </a>
+        <a href="https://t.me/stalinhead" target="_blank" rel="noopener" class="dropdown-item">
+          <svg class="tg-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.25-5.54 3.69-.52.36-1 .53-1.42.52-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.42-.88.03-.24.38-.49 1.05-.75 4.12-1.79 6.87-2.97 8.25-3.55 3.93-1.64 4.75-1.93 5.28-1.93.12 0 .37.03.54.17.14.12.18.28.2.45-.02.07-.02.13-.03.22z"/></svg> Канал ССБА
+        </a>
+        <a href="https://t.me/fck_131" target="_blank" rel="noopener" class="dropdown-item">
+          <svg class="tg-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.25-5.54 3.69-.52.36-1 .53-1.42.52-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.42-.88.03-.24.38-.49 1.05-.75 4.12-1.79 6.87-2.97 8.25-3.55 3.93-1.64 4.75-1.93 5.28-1.93.12 0 .37.03.54.17.14.12.18.28.2.45-.02.07-.02.13-.03.22z"/></svg> 1131 проспект
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <h1>Народный регистратор доменов</h1>
+    <p>Открытая сетевая инфраструктура 3-го и 4-го уровней. Выбирайте свободу и доступность цифровых ресурсов по протоколу HTTP.</p>
+  </section>
+
+  <main class="container">
+    <h2 class="section-title">
+      <span class="material-icons">dns</span>
+      Доступные доменные зоны
+    </h2>
+
+    <div class="domains-grid">
+      <script>
+        const domains = [
+          "ussr.l.cd", "cccp.l.cd", "stalin.l.cd", "revolution.l.cd",
+          "comparty.l.cd", "mels.l.cd", "marx.l.cd", "engels.l.cd",
+          "internationa.l.cd", "communism.l.cd", "minsvyazi.l.cd",
+          "su-mai.l.cd", "1917.l.cd", "1922.l.cd", "1945.l.cd",
+          "su-com.l.cd", "gost.l.cd", "rev.l.cd"
+        ];
+
+        document.write(domains.map(domain => `
+          <article class="domain-card">
+            <div>
+              <div class="domain-header">
+                <span class="material-icons">language</span>
+                <h3 class="domain-name">${domain}</h3>
+              </div>
+              <div class="domain-protocol">
+                <span class="material-icons">check_circle</span> Доступен по HTTP
+              </div>
+            </div>
+            <div class="card-actions">
+              <a href="http://${domain}" class="btn-flat" target="_blank" rel="noopener">Перейти</a>
+            </div>
+          </article>
+        `).join(''));
+      </script>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-col">
+        <h4>О проекте</h4>
+        <p>sovbb/root — независаемая сетевая платформа, предоставляющая доступ к альтернативным доменным зонам 3-го и 4-го уровней для свободного размещения веб-ресурсов.</p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Ресурсы и Связь</h4>
+        <ul class="footer-links">
+          <li>
+            <a href="https://t.me/stalinhead" target="_blank" rel="noopener">
+              <span class="material-icons">groups</span> Канал ССБА
+            </a>
+          </li>
+          <li>
+            <a href="https://t.me/fck_131" target="_blank" rel="noopener">
+              <span class="material-icons">campaign</span> 1131 проспект
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Статус сети</h4>
+        <p>Корневые DNS-узлы работают в штатном режиме.</p>
+        <p style="margin-top: 8px;">
+          <span class="status-badge">
+            <span class="status-dot"></span> Все сервисы онлайн
+          </span>
+        </p>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div>© sovbb / root — Сетевая инфраструктура</div>
+      <div>Протокол: HTTPS / IPv6 / Direct Routing</div>
+    </div>
+  </footer>
+
+  <script>
+    const menuBtn = document.getElementById('menu-btn');
+    const dropdownMenu = document.getElementById('dropdown-menu');
+
+    menuBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      dropdownMenu.classList.toggle('active');
+    });
+
+    document.addEventListener('click', () => {
+      dropdownMenu.classList.remove('active');
+    });
+  </script>
+
+</body>
+  </html>
+  
